@@ -19,7 +19,7 @@
      meetingId: "3n48-l9wm-6n2t", // required
      name: "Mister's Org", // required
      micEnabled: true, // optional, default: true
-     webcamEnabled: true, // optional, default: true
+     webcamEnabled: false, // optional, default: true
    });
  
    meeting.join();
