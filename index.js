@@ -1,20 +1,10 @@
 // Getting Elements from DOM
 const joinButton = document.getElementById("joinBtn");
 const createButton = document.getElementById("createMeetingBtn");
-const videoContainer = document.getElementById("videoContainer");
 const textDiv = document.getElementById("textDiv");
 
 let meeting = null;
 let meetingId = "";
-
-function createVideoElement(pId) {
-  let videoElement = document.createElement("video");
-  videoElement.classList.add("video-frame");
-  videoElement.setAttribute("id", `v-${pId}`);
-  videoElement.setAttribute("playsinline", true);
-  videoElement.setAttribute("width", "300");
-  return videoElement;
-}
 
 function createAudioElement(pId) {
   let audioElement = document.createElement("audio");
@@ -35,22 +25,11 @@ function createImageElement(pId) {
 
 function createLocalParticipant() {
   const localParticipantId = meeting.localParticipant.id;
-  let localParticipant = createVideoElement(localParticipantId);
   let imgElement = createImageElement(localParticipantId);
-  videoContainer.appendChild(localParticipant);
-  videoContainer.appendChild(imgElement);
+  textDiv.appendChild(imgElement);
 }
 
 function setTrack(stream, audioElement, participant, isLocal) {
-  if (stream.kind == "video") {
-    const mediaStream = new MediaStream();
-    mediaStream.addTrack(stream.track);
-    let videoElm = document.getElementById(`v-${participant.id}`);
-    videoElm.srcObject = mediaStream;
-    videoElm.play().catch((error) =>
-      console.error("videoElem.current.play() failed", error)
-    );
-  }
   if (stream.kind == "audio" && !isLocal) {
     const mediaStream = new MediaStream();
     mediaStream.addTrack(stream.track);
@@ -95,7 +74,7 @@ function initializeMeeting() {
     meetingId: meetingId,
     name: "Thomas Edison",
     micEnabled: true,
-    webcamEnabled: true,
+    webcamEnabled: false, // Set to false to disable video
   });
 
   meeting.join();
@@ -113,7 +92,6 @@ function initializeMeeting() {
   });
 
   meeting.on("participant-joined", (participant) => {
-    let videoElement = createVideoElement(participant.id);
     let audioElement = createAudioElement(participant.id);
     let imgElement = createImageElement(participant.id);
 
@@ -121,13 +99,11 @@ function initializeMeeting() {
       setTrack(stream, audioElement, participant, false);
     });
 
-    videoContainer.appendChild(videoElement);
-    videoContainer.appendChild(audioElement);
-    videoContainer.appendChild(imgElement);
+    textDiv.appendChild(audioElement);
+    textDiv.appendChild(imgElement);
   });
 
   meeting.on("participant-left", (participant) => {
-    document.getElementById(`v-${participant.id}`).remove();
     document.getElementById(`a-${participant.id}`).remove();
     document.getElementById(`img-${participant.id}`).remove();
   });
