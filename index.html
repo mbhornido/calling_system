@@ -1,18 +1,39 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <style>
+      .participant-img {
+        width: 100px;
+        height: auto;
+      }
+    </style>
   </head>
   <body>
-    <!-- add Join Meeting Button -->
-    <button>Join Meeting</button>
+    <div id="join-screen">
+      <!-- Create new Meeting Button -->
+      <button id="createMeetingBtn">New Meeting</button>
+      OR
+      <!-- Join existing Meeting -->
+      <input type="text" id="meetingIdTxt" placeholder="Enter Meeting id" />
+      <button id="joinBtn">Join Meeting</button>
+    </div>
 
     <!-- for Managing meeting status -->
     <div id="textDiv"></div>
 
-    <!-- render Video -->
-    <div class="row" id="videoContainer"></div>
+    <div id="grid-screen" style="display: none">
+      <!-- To Display MeetingId -->
+      <h3 id="meetingIdHeading"></h3>
 
+      <!-- Controllers -->
+      <button id="toggleMicBtn">Toggle Mic</button>
+
+      <!-- render Video -->
+      <div class="row" id="videoContainer"></div>
+    </div>
+
+    <script src="https://sdk.videosdk.live/js-sdk/0.0.86/videosdk.js"></script>
+    <script src="config.js"></script>
     <script src="index.js"></script>
-    <script src="https://sdk.videosdk.live/js-sdk/0.0.78/videosdk.js"></script>
   </body>
 </html>

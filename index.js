@@ -1,122 +1,134 @@
- // getting Elements from Dom 
- const joinButton = document.querySelector("button");
- const videoContainer = document.getElementById("videoContainer");
- const textDiv = document.getElementById("textDiv");
- 
- // decalare Variables
- let participants = [];
- let meeting = null;
- let localParticipant;
- let localParticipantAudio;
- let remoteParticipantId = "";
- 
- joinButton.addEventListener("click", () => {
-   joinButton.style.display = "none";
-   textDiv.textContent = "Please wait, we are joining the meeting";
- 
-   window.VideoSDK.config("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlrZXkiOiI4OTUyM2M3Ni1iZmYzLTRlNDgtYTQ2MS0yYmUyN2Y3ZWUyMTEiLCJwZXJtaXNzaW9ucyI6WyJhbGxvd19qb2luIl0sImlhdCI6MTcyMDYzMDc4NiwiZXhwIjoxNzIwNzE3MTg2fQ.5VOyHUEl7oYmG82fnf2Y_KIsWtxpq59Vx-MhsWNmnNk") // required;
-   meeting = window.VideoSDK.initMeeting({
-     meetingId: "3n48-l9wm-6n2t", // required
-     name: "Mister's Org", // required
-     micEnabled: true, // optional, default: true
-     webcamEnabled: false, // optional, default: true
-   });
- 
-   meeting.join();
- });
-// =========================================
-  // creating video element
-  function createVideoElement(pId) {
-    let videoElement = document.createElement("video");
-    videoElement.classList.add("video-frame");
-    videoElement.setAttribute("id", `v-${pId}`);
-    videoElement.setAttribute("playsinline", true);
-    videoElement.setAttribute("width", "300");
-    return videoElement;
+// Getting Elements from DOM
+const joinButton = document.getElementById("joinBtn");
+const createButton = document.getElementById("createMeetingBtn");
+const videoContainer = document.getElementById("videoContainer");
+const textDiv = document.getElementById("textDiv");
+
+let meeting = null;
+let meetingId = "";
+
+function createVideoElement(pId) {
+  let videoElement = document.createElement("video");
+  videoElement.classList.add("video-frame");
+  videoElement.setAttribute("id", `v-${pId}`);
+  videoElement.setAttribute("playsinline", true);
+  videoElement.setAttribute("width", "300");
+  return videoElement;
+}
+
+function createAudioElement(pId) {
+  let audioElement = document.createElement("audio");
+  audioElement.setAttribute("autoPlay", "false");
+  audioElement.setAttribute("playsInline", "true");
+  audioElement.setAttribute("controls", "false");
+  audioElement.setAttribute("id", `a-${pId}`);
+  return audioElement;
+}
+
+function createImageElement(pId) {
+  let imgElement = document.createElement("img");
+  imgElement.setAttribute("src", "img1.png");
+  imgElement.classList.add("participant-img");
+  imgElement.setAttribute("id", `img-${pId}`);
+  return imgElement;
+}
+
+function createLocalParticipant() {
+  const localParticipantId = meeting.localParticipant.id;
+  let localParticipant = createVideoElement(localParticipantId);
+  let imgElement = createImageElement(localParticipantId);
+  videoContainer.appendChild(localParticipant);
+  videoContainer.appendChild(imgElement);
+}
+
+function setTrack(stream, audioElement, participant, isLocal) {
+  if (stream.kind == "video") {
+    const mediaStream = new MediaStream();
+    mediaStream.addTrack(stream.track);
+    let videoElm = document.getElementById(`v-${participant.id}`);
+    videoElm.srcObject = mediaStream;
+    videoElm.play().catch((error) =>
+      console.error("videoElem.current.play() failed", error)
+    );
   }
-  
-  // creating audio element
-  function createAudioElement(pId) {
-    let audioElement = document.createElement("audio");
-    audioElement.setAttribute("autoPlay", "false");
-    audioElement.setAttribute("playsInline", "true");
-    audioElement.setAttribute("controls", "false");
-    audioElement.setAttribute("id", `a-${pId}`);
-    return audioElement;
+  if (stream.kind == "audio" && !isLocal) {
+    const mediaStream = new MediaStream();
+    mediaStream.addTrack(stream.track);
+    audioElement.srcObject = mediaStream;
+    audioElement.play().catch((error) =>
+      console.error("audioElem.play() failed", error)
+    );
   }
-  
-  // creating local participant
-  function createLocalParticipant() {
-    localParticipant = createVideoElement(meeting.localParticipant.id);
-    videoContainer.appendChild(localParticipant);
-  }
-  
-  // setting media track
-  function setTrack(stream, audioElement, participant, isLocal) {
-    if (stream.kind == "video") {
-      const mediaStream = new MediaStream();
-      mediaStream.addTrack(stream.track);
-      let videoElm = document.getElementById(`v-${participant.id}`);
-      videoElm.srcObject = mediaStream;
-      videoElm
-        .play()
-        .catch((error) =>
-          console.error("videoElem.current.play() failed", error)
-        );
-    }
-    if (stream.kind == "audio" && !isLocal) {
-      const mediaStream = new MediaStream();
-      mediaStream.addTrack(stream.track);
-      audioElement.srcObject = mediaStream;
-      audioElement
-        .play()
-        .catch((error) => console.error("audioElem.play() failed", error));
-    }
-  }
-  // ====================================
-  joinButton.addEventListener("click", () => {
-    // ...
-    // ...
-    // ...
-    
-    // creating local participant
-      createLocalParticipant();
-    
-    // setting local participant stream
-      meeting.localParticipant.on("stream-enabled", (stream) => {
-        setTrack(
-          stream,
-          localParticipantAudio,
-          meeting.localParticipant,
-          (isLocal = true)
-        );
-      });
-    
-      meeting.on("meeting-joined", () => {
-        textDiv.style.display = "none";
-      });
-    
-      // other participants
-      meeting.on("participant-joined", (participant) => {
-        let videoElement = createVideoElement(participant.id);
-        let audioElement = createAudioElement(participant.id);
-        remoteParticipantId = participant.id;
-    
-        participant.on("stream-enabled", (stream) => {
-          setTrack(stream, audioElement, participant, (isLocal = false));
-        });
-        videoContainer.appendChild(videoElement);
-        videoContainer.appendChild(audioElement);
-      });
-    
-      // participants left
-      meeting.on("participant-left", (participant) => {
-        let vElement = document.getElementById(`v-${participant.id}`);
-        vElement.parentNode.removeChild(vElement);
-    
-        let aElement = document.getElementById(`a-${participant.id}`);
-        aElement.parentNode.removeChild(aElement);
-        //remove it from participant list participantId;
-        document.getElementById(`p-${participant.id}`).remove();
-      });
+}
+
+// Join Meeting Button Event Listener
+joinButton.addEventListener("click", async () => {
+  document.getElementById("join-screen").style.display = "none";
+  textDiv.textContent = "Joining the meeting...";
+
+  meetingId = document.getElementById("meetingIdTxt").value;
+  initializeMeeting();
+});
+
+// Create Meeting Button Event Listener
+createButton.addEventListener("click", async () => {
+  document.getElementById("join-screen").style.display = "none";
+  textDiv.textContent = "Please wait, we are joining the meeting";
+
+  const url = `https://api.videosdk.live/v2/rooms`;
+  const options = {
+    method: "POST",
+    headers: { Authorization: TOKEN, "Content-Type": "application/json" },
+  };
+
+  const response = await fetch(url, options);
+  const data = await response.json();
+  meetingId = data.roomId;
+
+  initializeMeeting();
+});
+
+function initializeMeeting() {
+  window.VideoSDK.config(TOKEN);
+
+  meeting = window.VideoSDK.initMeeting({
+    meetingId: meetingId,
+    name: "Thomas Edison",
+    micEnabled: true,
+    webcamEnabled: true,
+  });
+
+  meeting.join();
+
+  createLocalParticipant();
+
+  meeting.localParticipant.on("stream-enabled", (stream) => {
+    setTrack(stream, null, meeting.localParticipant, true);
+  });
+
+  meeting.on("meeting-joined", () => {
+    textDiv.style.display = "none";
+    document.getElementById("grid-screen").style.display = "block";
+    document.getElementById("meetingIdHeading").textContent = `Meeting Id: ${meetingId}`;
+  });
+
+  meeting.on("participant-joined", (participant) => {
+    let videoElement = createVideoElement(participant.id);
+    let audioElement = createAudioElement(participant.id);
+    let imgElement = createImageElement(participant.id);
+
+    participant.on("stream-enabled", (stream) => {
+      setTrack(stream, audioElement, participant, false);
     });
+
+    videoContainer.appendChild(videoElement);
+    videoContainer.appendChild(audioElement);
+    videoContainer.appendChild(imgElement);
+  });
+
+  meeting.on("participant-left", (participant) => {
+    document.getElementById(`v-${participant.id}`).remove();
+    document.getElementById(`a-${participant.id}`).remove();
+    document.getElementById(`img-${participant.id}`).remove();
+  });
+}
