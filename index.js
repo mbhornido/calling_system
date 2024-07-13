@@ -42,6 +42,16 @@ function setTrack(stream, audioElement, participant, isLocal) {
   }
 }
 
+// Copy to clipboard function
+function copyToClipboard(text) {
+  const tempInput = document.createElement("input");
+  tempInput.value = text;
+  document.body.appendChild(tempInput);
+  tempInput.select();
+  document.execCommand("copy");
+  document.body.removeChild(tempInput);
+}
+
 // Join Meeting Button Event Listener
 joinButton.addEventListener("click", async () => {
   document.getElementById("join-screen").style.display = "none";
@@ -90,7 +100,15 @@ function initializeMeeting() {
   meeting.on("meeting-joined", () => {
     textDiv.style.display = "none";
     document.getElementById("grid-screen").style.display = "block";
-    document.getElementById("meetingIdHeading").textContent = `Meeting Id: ${meetingId}`;
+    const meetingUrl = `${window.location.origin}?meetingId=${meetingId}`;
+    const meetingIdHeading = document.getElementById("meetingIdHeading");
+    meetingIdHeading.innerHTML = `Meeting Id: <span id="meetingIdSpan">${meetingId}</span>`;
+    
+    const meetingIdSpan = document.getElementById("meetingIdSpan");
+    meetingIdSpan.addEventListener("click", () => {
+      copyToClipboard(meetingUrl);
+      alert("Meeting URL copied to clipboard!");
+    });
   });
 
   meeting.on("participant-joined", (participant) => {
@@ -123,4 +141,16 @@ toggleMicButton.addEventListener("click", async () => {
     toggleMicButton.textContent = "Mute Mic";
   }
   isMicOn = !isMicOn;
+});
+
+// Handle URL meetingId
+document.addEventListener("DOMContentLoaded", () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const meetingIdFromUrl = urlParams.get('meetingId');
+  if (meetingIdFromUrl) {
+    document.getElementById("join-screen").style.display = "none";
+    textDiv.textContent = "Joining the meeting...";
+    meetingId = meetingIdFromUrl;
+    initializeMeeting();
+  }
 });

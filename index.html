@@ -1,118 +1,118 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <!-- Font Awesome for icons -->
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-      <style>
-        body {
-          font-family: Arial, sans-serif;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          height: 100vh;
-          background-color: #f0f0f0;
-          margin: 0;
-        }
+<head>
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+      margin: 0;
+    }
 
-        #join-screen, #grid-screen {
-          background: #fff;
-          border-radius: 10px;
-          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-          padding: 20px;
-          text-align: center;
-        }
+    #join-screen, #grid-screen {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      text-align: center;
+    }
 
-        #join-screen {
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-          width: 300px;
-        }
+    #join-screen {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 300px;
+    }
 
-        #grid-screen {
-          display: none;
-        }
+    #grid-screen {
+      display: none;
+    }
 
-        #textDiv {
-          margin-top: 20px;
-        }
+    #textDiv {
+      margin-top: 20px;
+    }
 
-        button {
-          background-color: #4CAF50;
-          border: none;
-          color: white;
-          padding: 10px 20px;
-          text-align: center;
-          text-decoration: none;
-          display: inline-block;
-          font-size: 16px;
-          margin: 4px 2px;
-          cursor: pointer;
-          border-radius: 5px;
-          transition: background-color 0.3s;
-        }
+    button {
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
 
-        button:hover {
-          background-color: #45a049;
-        }
+    button:hover {
+      background-color: #45a049;
+    }
 
-        button i {
-          margin-right: 8px;
-        }
+    button i {
+      margin-right: 8px;
+    }
 
-        input[type="text"] {
-          width: calc(100% - 24px);
-          padding: 10px;
-          margin: 4px 2px;
-          border: 1px solid #ccc;
-          border-radius: 5px;
-        }
+    input[type="text"] {
+      width: calc(100% - 24px);
+      padding: 10px;
+      margin: 4px 2px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
 
-        .participant-img {
-          width: 100px;
-          height: auto;
-          border-radius: 50%;
-          margin: 10px;
-          border: 2px solid #4CAF50;
-        }
+    .participant-img {
+      width: 100px;
+      height: auto;
+      border-radius: 50%;
+      margin: 10px;
+      border: 2px solid #4CAF50;
+    }
 
-        h3 {
-          margin-bottom: 20px;
-        }
+    h3 {
+      margin-bottom: 20px;
+    }
 
-        .fa-microphone {
-          color: #ff3b3b;
-        }
+    .fa-microphone {
+      color: #ff3b3b;
+    }
 
-        .fa-microphone-slash {
-          color: #4CAF50;
-        }
-      </style>
-  </head>
-  <body>
-    <div id="join-screen">
-      <!-- Create new Meeting Button -->
-      <button id="createMeetingBtn"><i class="fas fa-plus"></i>New Meeting</button>
-      <p>OR</p>
-      <!-- Join existing Meeting -->
-      <input type="text" id="meetingIdTxt" placeholder="Enter Meeting ID" />
-      <button id="joinBtn"><i class="fas fa-sign-in-alt"></i>Join Meeting</button>
-    </div>
+    .fa-microphone-slash {
+      color: #4CAF50;
+    }
+  </style>
+</head>
+<body>
+  <div id="join-screen">
+    <!-- Create new Meeting Button -->
+    <button id="createMeetingBtn"><i class="fas fa-plus"></i>New Meeting</button>
+    <p>OR</p>
+    <!-- Join existing Meeting -->
+    <input type="text" id="meetingIdTxt" placeholder="Enter Meeting ID" />
+    <button id="joinBtn"><i class="fas fa-sign-in-alt"></i>Join Meeting</button>
+  </div>
 
-    <!-- for Managing meeting status -->
-    <div id="textDiv"></div>
+  <!-- for Managing meeting status -->
+  <div id="textDiv"></div>
 
-    <div id="grid-screen">
-      <!-- To Display MeetingId -->
-      <img src="img1.png" width="100px" alt="Profile Image">
-      <h3 id="meetingIdHeading"></h3>
+  <div id="grid-screen">
+    <!-- To Display MeetingId -->
+    <img src="img1.png" width="100px" alt="Profile Image">
+    <h3 id="meetingIdHeading"></h3>
 
-      <!-- Controllers -->
-      <button id="toggleMicBtn"><i class="fas fa-microphone-slash"></i>Toggle Mic</button>
-    </div>
+    <!-- Controllers -->
+    <button id="toggleMicBtn"><i class="fas fa-microphone-slash"></i>Toggle Mic</button>
+  </div>
 
-    <script src="https://sdk.videosdk.live/js-sdk/0.0.86/videosdk.js"></script>
-    <script src="config.js"></script>
-    <script src="index.js"></script>
-  </body>
+  <script src="https://sdk.videosdk.live/js-sdk/0.0.86/videosdk.js"></script>
+  <script src="config.js"></script>
+  <script src="index.js"></script>
+</body>
 </html>
