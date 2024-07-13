@@ -2,9 +2,11 @@
 const joinButton = document.getElementById("joinBtn");
 const createButton = document.getElementById("createMeetingBtn");
 const textDiv = document.getElementById("textDiv");
+const toggleMicButton = document.getElementById("toggleMicBtn");
 
 let meeting = null;
 let meetingId = "";
+let isMicOn = true;
 
 function createAudioElement(pId) {
   let audioElement = document.createElement("audio");
@@ -108,3 +110,17 @@ function initializeMeeting() {
     document.getElementById(`img-${participant.id}`).remove();
   });
 }
+
+// Toggle Mic Button Event Listener
+toggleMicButton.addEventListener("click", async () => {
+  if (isMicOn) {
+    // Disable Mic in Meeting
+    meeting?.muteMic();
+    toggleMicButton.textContent = "Unmute Mic";
+  } else {
+    // Enable Mic in Meeting
+    meeting?.unmuteMic();
+    toggleMicButton.textContent = "Mute Mic";
+  }
+  isMicOn = !isMicOn;
+});
