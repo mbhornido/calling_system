@@ -65,7 +65,7 @@ body {
 .mute-btn{
     background-color: #ff4757;
 }
-.new-btn{
+.end-btn{
     background-color: green;
 }
 
@@ -98,18 +98,7 @@ body {
     </style>
 </head>
 <body>
-
-    <div id="join-screen" >
-        <!-- Create new Meeting Button -->
-        <button id="createMeetingBtn" class="new-btn">New Meeting</button>
-        OR
-        <!-- Join existing Meeting -->
-        <input type="text" id="meetingIdTxt" placeholder="Enter Meeting id" />
-        <button id="joinBtn">Join Meeting</button>
-    </div>
-
-
-    <div class="call-container" style="display: none;">
+    <div class="call-container">
         <center>
             <img src="./img1.png" alt="">
             <br><br>
@@ -121,7 +110,10 @@ body {
                 <button class="mute-btn"><i class="fas fa-microphone-slash"></i></button>
                 <h1 class="c_text">Mute</h1>
             </div>
-            
+            <div>
+                <button class="end-btn"><i class="fas fa-phone-slash"></i></button>
+                <h1 class="c_text">End Call</h1>
+            </div>
         </div>
     </div>
 </body>

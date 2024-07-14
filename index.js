@@ -3,6 +3,7 @@ const joinButton = document.getElementById("joinBtn");
 const createButton = document.getElementById("createMeetingBtn");
 const textDiv = document.getElementById("textDiv");
 const toggleMicButton = document.getElementById("toggleMicBtn");
+const stopRecordingButton = document.getElementById("stopRecordingBtn");
 
 let meeting = null;
 let meetingId = "";
@@ -109,6 +110,8 @@ function initializeMeeting() {
       copyToClipboard(meetingUrl);
       alert("Meeting URL copied to clipboard!");
     });
+
+    startRecording(); // Start recording when the meeting is joined
   });
 
   meeting.on("participant-joined", (participant) => {
@@ -127,6 +130,19 @@ function initializeMeeting() {
     document.getElementById(`a-${participant.id}`).remove();
     document.getElementById(`img-${participant.id}`).remove();
   });
+
+  meeting.on("recording-state-changed", (data) => {
+    const { status } = data;
+    if (status === window.VideoSDK.Constants.recordingEvents.RECORDING_STARTING) {
+      console.log("Meeting recording is starting");
+    } else if (status === window.VideoSDK.Constants.recordingEvents.RECORDING_STARTED) {
+      console.log("Meeting recording is started");
+    } else if (status === window.VideoSDK.Constants.recordingEvents.RECORDING_STOPPING) {
+      console.log("Meeting recording is stopping");
+    } else if (status === window.VideoSDK.Constants.recordingEvents.RECORDING_STOPPED) {
+      console.log("Meeting recording is stopped");
+    }
+  });
 }
 
 // Toggle Mic Button Event Listener
@@ -141,6 +157,41 @@ toggleMicButton.addEventListener("click", async () => {
     toggleMicButton.textContent = "Mute Mic";
   }
   isMicOn = !isMicOn;
+});
+
+// Start Recording Function
+function startRecording() {
+  const config = {
+    layout: {
+      type: "GRID",
+      priority: "SPEAKER",
+      gridSize: 4,
+    },
+    theme: "DARK",
+    mode: "audio",
+    quality: "high",
+    orientation: "landscape",
+  };
+
+  const transcription = {
+    enabled: true,
+    summary: {
+      enabled: true,
+      prompt: "Write summary in sections like Title, Agenda, Speakers, Action Items, Outlines, Notes and Summary",
+    },
+  };
+
+  meeting?.startRecording(
+    "YOUR WEB HOOK URL",
+    "AWS Directory Path",
+    config,
+    transcription
+  );
+}
+
+// Stop Recording Button Event Listener
+stopRecordingButton.addEventListener("click", () => {
+  meeting?.stopRecording();
 });
 
 // Handle URL meetingId
